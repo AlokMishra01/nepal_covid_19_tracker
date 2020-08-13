@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nepal_covid_19_tracker/bottom_navigator.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/dashboard_provider.dart';
+import 'package:nepal_covid_19_tracker/dashboard/provider/stats_provider.dart';
 import 'package:nepal_covid_19_tracker/faq/faq_provider.dart';
 import 'package:nepal_covid_19_tracker/myths/myth_provider.dart';
 import 'package:nepal_covid_19_tracker/hospitals/hospital_provider.dart';
@@ -45,6 +46,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     Provider.of<DashboardProvider>(context);
+    Provider.of<StatsProvider>(context);
     Provider.of<NewsProvider>(context);
     Provider.of<HospitalProvider>(context);
     Provider.of<MythProvider>(context);

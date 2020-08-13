@@ -1,19 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:nepal_covid_19_tracker/dashboard/provider/dashboard_provider.dart';
-import 'package:nepal_covid_19_tracker/faq/faq_item_view.dart';
-import 'package:nepal_covid_19_tracker/faq/faq_list.dart';
-import 'package:nepal_covid_19_tracker/faq/faq_provider.dart';
-import 'package:nepal_covid_19_tracker/myths/myth_item_view.dart';
-import 'package:nepal_covid_19_tracker/myths/myth_list.dart';
-import 'package:nepal_covid_19_tracker/myths/myth_provider.dart';
-import 'package:nepal_covid_19_tracker/news/news_item_view.dart';
-import 'package:nepal_covid_19_tracker/news/news_list.dart';
-import 'package:nepal_covid_19_tracker/news/news_provider.dart';
+import 'package:nepal_covid_19_tracker/dashboard/model/nepal_timeline_model.dart';
+import 'package:nepal_covid_19_tracker/dashboard/provider/stats_provider.dart';
 import 'package:nepal_covid_19_tracker/utils/colors.dart';
-import 'package:nepal_covid_19_tracker/utils/date_time_parser.dart';
 import 'package:provider/provider.dart';
-import 'package:route_transitions/route_transitions.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({Key key}) : super(key: key);
@@ -23,1024 +13,607 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
-  _refreshPage(
-    DashboardProvider d,
-    NewsProvider n,
-    MythProvider m,
-    FAQProvider f,
-  ) async {
-    await d.getWorldSummery();
-    await d.getNepalSummery();
-    await d.getWorldCountry();
-    await n.initNews();
-    await m.initMyths();
-    await f.initMyths();
+  _refreshPage(StatsProvider s) async {
+    await s.getNepalTimeline();
   }
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final dashProvider = Provider.of<DashboardProvider>(context);
-    final newsProvider = Provider.of<NewsProvider>(context);
-    final mythProvider = Provider.of<MythProvider>(context);
-    final faqProvider = Provider.of<FAQProvider>(context);
-    final nepalInfo = dashProvider.worldByCountry.stats
-        .where((e) => e.countryCode == 'NP')
-        .first;
-    var updateTime =
-        DateTime.fromMillisecondsSinceEpoch(dashProvider.worldSummery.updated);
+    final statsProvider = Provider.of<StatsProvider>(context);
+    final List<Timelines> timelineBars = List<Timelines>();
+    final List<Timelines> timeline = List<Timelines>();
+    if (statsProvider.timeline != null) {
+      var t = statsProvider.timeline.timelines;
+      for (int i = t.length - 8; i < t.length; i++) {
+        timeline.add(t[i]);
+      }
+      for (int i = t.length - 16; i < t.length; i++) {
+        timelineBars.add(t[i]);
+      }
+    }
     return Material(
       color: PRIMARY_COLOR.withOpacity(0.1),
       child: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () => _refreshPage(
-            dashProvider,
-            newsProvider,
-            mythProvider,
-            faqProvider,
-          ),
-          child: (dashProvider.worldByCountry != null &&
-                  dashProvider.worldSummery != null &&
-                  dashProvider.nepakSummery != null &&
-                  newsProvider.news != null &&
-                  mythProvider.myths != null &&
-                  faqProvider.faqs != null)
+          onRefresh: () => _refreshPage(statsProvider),
+          child: (statsProvider.timeline != null)
               ? ListView(
                   physics: BouncingScrollPhysics(),
                   shrinkWrap: true,
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 16),
-                        Material(
-                          color: PRIMARY_COLOR.withOpacity(0.75),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.asset(
-                                  'assets/images/globe.png',
-                                  height: 16,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  'World Summery',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    SizedBox(
+                      height: 16.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
                             Text(
-                                'Latest Update ${timeDiffNowLocal(updateTime.toString())}',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                            Text('',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
+                              'Total COVID-19 Cases In Nepal (Last 7 Days)',
+                              style: TextStyle(
+                                color: PRIMARY_COLOR,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                             SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
-                                color: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
+                              height: 8.0,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: LineChart(
+                                LineChartData(
+                                  minY:
+                                      (timeline[0].totalCases - 250).toDouble(),
+                                  maxY: (timeline.last.totalCases + 250)
+                                      .toDouble(),
+                                  //minX: (-0.5).toDouble(),
+                                  //maxX: (timeline.length - 0.5).toDouble(),
+                                  lineTouchData: LineTouchData(enabled: true),
+                                  gridData: FlGridData(
+                                    show: false,
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Cases',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: [
+                                        for (int i = 0;
+                                            i < timeline.length;
+                                            i++)
+                                          FlSpot(
+                                            i.toDouble(),
+                                            timeline[i].totalCases.toDouble(),
+                                          ),
+                                      ],
+                                      isCurved: true,
+                                      barWidth: 2,
+                                      preventCurveOverShooting: true,
+                                      show: true,
+                                      colors: [
+                                        PRIMARY_COLOR,
+                                      ],
+                                      dotData: FlDotData(
+                                        show: true,
                                       ),
-                                      Text(
-                                        'Today ${dashProvider.worldSummery.todayCases}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
+                                    ),
+                                  ],
+                                  titlesData: FlTitlesData(
+                                    bottomTitles: SideTitles(
+                                        showTitles: true,
+                                        textStyle: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.purple,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                      ),
-                                      Text(
-                                        'Total ${dashProvider.worldSummery.cases}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                        rotateAngle: 90,
+                                        getTitles: (value) {
+                                          return timeline[(value).floor()]
+                                              .date
+                                              .substring(
+                                                5,
+                                              );
+                                        }),
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                      interval: 500,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Daily COVID-19 Cases In Nepal (Last 30 Days)',
+                              style: TextStyle(
+                                color: PRIMARY_COLOR,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                             SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
+                              height: 8.0,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.spaceBetween,
+                                  minY: 0,
+                                  groupsSpace: 4,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.purple,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      margin: 10,
+                                      rotateAngle: 90,
+                                      getTitles: (double value) {
+                                        return timelineBars[value.floor()]
+                                            .date
+                                            .substring(5);
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                    ),
+                                  ),
+                                  barGroups: [
+                                    for (int i = 0;
+                                        i < timelineBars.length;
+                                        i++)
+                                      BarChartGroupData(
+                                        x: 0,
+                                        barRods: [
+                                          BarChartRodData(
+                                            y: timelineBars[i]
+                                                .newCases
+                                                .toDouble(),
+                                            width: 14,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(2),
+                                              topRight: Radius.circular(2),
+                                            ),
+                                            rodStackItems: [
+                                              BarChartRodStackItem(
+                                                0,
+                                                timelineBars[i]
+                                                    .newCases
+                                                    .toDouble(),
+                                                PRIMARY_COLOR,
+                                              ),
+                                              // BarChartRodStackItem(
+                                              //   0,
+                                              //   timelineBars[i]
+                                              //       .newRecoveries
+                                              //       .toDouble(),
+                                              //   Colors.green,
+                                              // ),
+                                              // BarChartRodStackItem(
+                                              //   0,
+                                              //   timelineBars[i]
+                                              //       .newDeaths
+                                              //       .toDouble(),
+                                              //   Colors.red,
+                                              // ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Total COVID-19 Deaths In Nepal (Last 7 Days)',
+                              style: TextStyle(
                                 color: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Deaths',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Today ${dashProvider.worldSummery.todayDeaths}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Total ${dashProvider.worldSummery.deaths}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
-                                color: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
+                              height: 8.0,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: LineChart(
+                                LineChartData(
+                                  minY:
+                                      (timeline[0].totalDeaths - 5).toDouble(),
+                                  maxY: (timeline.last.totalDeaths + 5)
+                                      .toDouble(),
+                                  //minX: (-0.5).toDouble(),
+                                  //maxX: (timeline.length - 0.5).toDouble(),
+                                  lineTouchData: LineTouchData(enabled: true),
+                                  gridData: FlGridData(
+                                    show: false,
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Recovery',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: [
+                                        for (int i = 0;
+                                            i < timeline.length;
+                                            i++)
+                                          FlSpot(
+                                            i.toDouble(),
+                                            timeline[i].totalDeaths.toDouble(),
+                                          ),
+                                      ],
+                                      isCurved: true,
+                                      barWidth: 2,
+                                      preventCurveOverShooting: true,
+                                      show: true,
+                                      colors: [
+                                        Colors.red,
+                                      ],
+                                      dotData: FlDotData(
+                                        show: true,
                                       ),
-                                      Text(
-                                        'Today ${dashProvider.worldSummery.todayRecovered}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                    ),
+                                  ],
+                                  titlesData: FlTitlesData(
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.purple,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      Text(
-                                        'Total ${dashProvider.worldSummery.recovered}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                      rotateAngle: 90,
+                                      getTitles: (value) {
+                                        return timeline[(value).floor()]
+                                            .date
+                                            .substring(
+                                              5,
+                                            );
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                      interval: 5,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
-                        Material(
-                          color: PRIMARY_COLOR.withOpacity(0.75),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Image.network(
-                                  nepalInfo.countryInfo.flag,
-                                  height: 16,
-                                ),
-                                SizedBox(width: 4),
-                                Text(
-                                  'Nepal Summery',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
                             Text(
-                                'Latest Update ${timeDiffNow(nepalInfo.updated)}',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                            Text('',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          ],
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
-                                color: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Cases',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Today ${nepalInfo.newCases}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Total ${nepalInfo.totalCases}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
+                              'Daily COVID-19 Death In Nepal (Last 30 Days)',
+                              style: TextStyle(
                                 color: Colors.red,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Deaths',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Today ${nepalInfo.newDeaths}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Total ${nepalInfo.totalDeaths}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             SizedBox(
-                              width: (width - 32) / 3,
-                              child: Material(
-                                color: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
+                              height: 8.0,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.spaceBetween,
+                                  minY: 0,
+                                  groupsSpace: 4,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
                                   ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Recovered ${nepalInfo.totalRecovered}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Active ${nepalInfo.activeCases}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      Text(
-                                        'Tests ${nepalInfo.tests}',
-                                        style: TextStyle(
-                                          color: WHITE,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
+                                  borderData: FlBorderData(
+                                    show: false,
                                   ),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.purple,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      margin: 10,
+                                      rotateAngle: 90,
+                                      getTitles: (double value) {
+                                        return timelineBars[value.floor()]
+                                            .date
+                                            .substring(5);
+                                      },
+                                    ),
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                    ),
+                                  ),
+                                  barGroups: [
+                                    for (int i = 0;
+                                        i < timelineBars.length;
+                                        i++)
+                                      BarChartGroupData(
+                                        x: 0,
+                                        barRods: [
+                                          BarChartRodData(
+                                            y: timelineBars[i]
+                                                .newDeaths
+                                                .toDouble(),
+                                            width: 14,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(2),
+                                              topRight: Radius.circular(2),
+                                            ),
+                                            rodStackItems: [
+                                              BarChartRodStackItem(
+                                                0,
+                                                timelineBars[i]
+                                                    .newDeaths
+                                                    .toDouble(),
+                                                Colors.red,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 4),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
                             Text(
-                                'Latest Update ${timeDiffNow(dashProvider.nepakSummery.latestSitReport.updatedAt)}',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                            Text('Source MOHP SIT',
-                                style: TextStyle(
-                                  color: STEXT,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          ],
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: (width - 24) / 2,
-                              child: Material(
-                                color: WHITE,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Positive',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.testedPositive
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Negative',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.testedNegative
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Pending',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.pendingResult
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'RDT Tests',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider.nepakSummery.testedRdt
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Total Tests',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.testedTotal
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                              'Total COVID-19 Recoveries In Nepal (Last 7 Days)',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             SizedBox(
-                              width: (width - 24) / 2,
-                              child: Material(
-                                color: WHITE,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Deaths',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider.nepakSummery.deaths
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Recovered',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider.nepakSummery.recovered
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Quarantined',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.quarantined
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Isolation',
-                                            style: TextStyle(
-                                              color: PRIMARY_COLOR,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            dashProvider
-                                                .nepakSummery.inIsolation
-                                                .toString(),
-                                            style: TextStyle(
-                                              color: STEXT,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        Material(
-                          color: PRIMARY_COLOR.withOpacity(0.75),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  ' Country Ranking ',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 8),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount:
-                              dashProvider.worldByCountry.stats.length > 10
-                                  ? 10
-                                  : dashProvider.worldByCountry.stats.length,
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 4.0,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            return Material(
-                              color: WHITE,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.0),
-                                ),
-                              ),
-                              child: ListTile(
-                                isThreeLine: true,
-                                dense: true,
-                                leading: CachedNetworkImage(
-                                  imageUrl: dashProvider.worldByCountry
-                                      .stats[index + 2].countryInfo.flag,
-                                  width: 28,
-                                  height: 28,
-                                ),
-                                title: Text(
-                                  dashProvider
-                                      .worldByCountry.stats[index + 2].country,
-                                  style: TextStyle(
-                                    color: PRIMARY_COLOR,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  'Cases ${dashProvider.worldByCountry.stats[index + 2].totalCases} '
-                                  '(Today ${dashProvider.worldByCountry.stats[index + 2].newCases})\n'
-                                  'Deaths ${dashProvider.worldByCountry.stats[index + 2].totalDeaths} '
-                                  '(Today ${dashProvider.worldByCountry.stats[index + 2].newDeaths})',
-                                  style: TextStyle(
-                                    color: STEXT,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Material(
-                              color: PRIMARY_COLOR.withOpacity(0.75),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.0),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  ' News ',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                              height: 8.0,
                             ),
                             SizedBox(
-                              height: 32,
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteTransition(
-                                      animationType: AnimationType.fade,
-                                      builder: (context) => NewsListView(),
+                              width: double.infinity,
+                              child: LineChart(
+                                LineChartData(
+                                  minY: (timeline[0].totalRecoveries - 250)
+                                      .toDouble(),
+                                  maxY: (timeline.last.totalRecoveries + 250)
+                                      .toDouble(),
+                                  //minX: (-0.5).toDouble(),
+                                  //maxX: (timeline.length - 0.5).toDouble(),
+                                  gridData: FlGridData(
+                                    show: false,
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  lineTouchData: LineTouchData(enabled: true),
+                                  lineBarsData: [
+                                    LineChartBarData(
+                                      spots: [
+                                        for (int i = 0;
+                                            i < timeline.length;
+                                            i++)
+                                          FlSpot(
+                                            i.toDouble(),
+                                            timeline[i]
+                                                .totalRecoveries
+                                                .toDouble(),
+                                          ),
+                                      ],
+                                      isCurved: true,
+                                      barWidth: 2,
+                                      preventCurveOverShooting: true,
+                                      show: true,
+                                      colors: [Colors.green],
+                                      dotData: FlDotData(
+                                        show: true,
+                                      ),
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  ' View All ',
-                                  style: TextStyle(
-                                    color: PRIMARY_COLOR,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                color: WHITE,
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(5.0),
-                                  ),
-                                  side: BorderSide(
-                                    color: PRIMARY_COLOR.withOpacity(0.75),
+                                  ],
+                                  titlesData: FlTitlesData(
+                                    bottomTitles: SideTitles(
+                                        showTitles: true,
+                                        rotateAngle: 90,
+                                        textStyle: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.purple,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        getTitles: (value) {
+                                          return timeline[(value).floor()]
+                                              .date
+                                              .substring(
+                                                5,
+                                              );
+                                        }),
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                      interval: 250,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: newsProvider.news.data.length > 3
-                              ? 3
-                              : newsProvider.news.data.length,
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 4.0,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            return NewsItemView(
-                              data: newsProvider.news.data[index],
-                            );
-                          },
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Material(
+                      color: WHITE,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
                           children: [
-                            Material(
-                              color: PRIMARY_COLOR.withOpacity(0.75),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.0),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  ' Myths ',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                            Text(
+                              'Daily COVID-19 Recoveries In Nepal (Last 30 Days)',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                             SizedBox(
-                              height: 32,
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteTransition(
-                                      animationType: AnimationType.fade,
-                                      builder: (context) => MythListView(),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  ' View All ',
-                                  style: TextStyle(
-                                    color: PRIMARY_COLOR,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                color: WHITE,
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(5.0),
-                                  ),
-                                  side: BorderSide(
-                                    color: PRIMARY_COLOR.withOpacity(0.75),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: mythProvider.myths.data.length > 3
-                              ? 3
-                              : newsProvider.news.data.length,
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 4.0,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            return MythItemView(
-                              data: mythProvider.myths.data[index],
-                            );
-                          },
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Material(
-                              color: PRIMARY_COLOR.withOpacity(0.75),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(5.0),
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  ' FAQs ',
-                                  style: TextStyle(
-                                    color: WHITE,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                              height: 8.0,
                             ),
                             SizedBox(
-                              height: 32,
-                              child: FlatButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    PageRouteTransition(
-                                      animationType: AnimationType.fade,
-                                      builder: (context) => FAQListView(),
+                              width: double.infinity,
+                              child: BarChart(
+                                BarChartData(
+                                  alignment: BarChartAlignment.spaceBetween,
+                                  minY: 0,
+                                  groupsSpace: 4,
+                                  barTouchData: BarTouchData(
+                                    enabled: true,
+                                  ),
+                                  borderData: FlBorderData(
+                                    show: false,
+                                  ),
+                                  titlesData: FlTitlesData(
+                                    show: true,
+                                    bottomTitles: SideTitles(
+                                      showTitles: true,
+                                      textStyle: const TextStyle(
+                                        fontSize: 10,
+                                        color: Colors.purple,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      margin: 10,
+                                      rotateAngle: 90,
+                                      getTitles: (double value) {
+                                        return timelineBars[value.floor()]
+                                            .date
+                                            .substring(5);
+                                      },
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  ' View All ',
-                                  style: TextStyle(
-                                    color: PRIMARY_COLOR,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                                    leftTitles: SideTitles(
+                                      showTitles: false,
+                                    ),
                                   ),
-                                ),
-                                color: WHITE,
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(5.0),
-                                  ),
-                                  side: BorderSide(
-                                    color: PRIMARY_COLOR.withOpacity(0.75),
-                                  ),
+                                  barGroups: [
+                                    for (int i = 0;
+                                        i < timelineBars.length;
+                                        i++)
+                                      BarChartGroupData(
+                                        x: 0,
+                                        barRods: [
+                                          BarChartRodData(
+                                            y: timelineBars[i]
+                                                .newRecoveries
+                                                .toDouble(),
+                                            width: 14,
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              topLeft: Radius.circular(2),
+                                              topRight: Radius.circular(2),
+                                            ),
+                                            rodStackItems: [
+                                              BarChartRodStackItem(
+                                                0,
+                                                timelineBars[i]
+                                                    .newRecoveries
+                                                    .toDouble(),
+                                                Colors.green,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                  ],
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
-                        ListView.separated(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: faqProvider.faqs.data.length > 3
-                              ? 3
-                              : newsProvider.news.data.length,
-                          separatorBuilder: (context, index) {
-                            return SizedBox(
-                              height: 4.0,
-                            );
-                          },
-                          itemBuilder: (context, index) {
-                            return FAQItemView(
-                              data: faqProvider.faqs.data[index],
-                            );
-                          },
-                        ),
-                        SizedBox(height: 60),
-                      ],
-                    )
+                      ),
+                    ),
+                    SizedBox(
+                      height: 60,
+                    ),
                   ],
                 )
               : Center(
                   child: FlatButton(
-                    onPressed: () => _refreshPage(
-                      dashProvider,
-                      newsProvider,
-                      mythProvider,
-                      faqProvider,
-                    ),
+                    onPressed: () => _refreshPage(statsProvider),
                     color: PRIMARY_COLOR,
                     child: Text(
                       'Reload',
