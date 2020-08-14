@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:nepal_covid_19_tracker/bottom_navigator.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/dashboard_provider.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/stats_provider.dart';
+import 'package:nepal_covid_19_tracker/details/provider/details_provider.dart';
 import 'package:nepal_covid_19_tracker/faq/faq_provider.dart';
 import 'package:nepal_covid_19_tracker/myths/myth_provider.dart';
 import 'package:nepal_covid_19_tracker/hospitals/hospital_provider.dart';
@@ -52,6 +53,7 @@ class _SplashPageState extends State<SplashPage> {
     Provider.of<MythProvider>(context);
     Provider.of<FAQProvider>(context);
     Provider.of<RecourceProvider>(context);
+    Provider.of<DetailsProvider>(context);
     final width = MediaQuery.of(context).size.width;
     return Material(
       color: PRIMARY_COLOR,

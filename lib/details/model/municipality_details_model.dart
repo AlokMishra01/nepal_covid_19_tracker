@@ -9,29 +9,29 @@ class MunicipalityDetailsModel {
   String type;
   String code;
   int district;
-  //List<Null> covidCases;
+  List<CovidCases> covidCases;
   Demographics demographics;
-  Contact contact;
-  List<Wards> wards;
-  //List<Null> healthFacilities;
+  //Null contact;
+  // List<Null> wards;
+  // List<Null> healthFacilities;
 
-  MunicipalityDetailsModel(
-      {this.sId,
-      this.id,
-      this.bbox,
-      this.centroid,
-      this.title,
-      this.titleEn,
-      this.titleNe,
-      this.type,
-      this.code,
-      this.district,
-      //this.covidCases,
-      this.demographics,
-      this.contact,
-      this.wards,
-      //this.healthFacilities,
-      });
+  MunicipalityDetailsModel({
+    this.sId,
+    this.id,
+    this.bbox,
+    this.centroid,
+    this.title,
+    this.titleEn,
+    this.titleNe,
+    this.type,
+    this.code,
+    this.district,
+    this.covidCases,
+    this.demographics,
+    // this.contact,
+    // this.wards,
+    // this.healthFacilities,
+  });
 
   MunicipalityDetailsModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -46,23 +46,22 @@ class MunicipalityDetailsModel {
     type = json['type'];
     code = json['code'];
     district = json['district'];
-    // if (json['covid_cases'] != null) {
-    //   covidCases = new List<Null>();
-    //   json['covid_cases'].forEach((v) {
-    //     covidCases.add(new Null.fromJson(v));
-    //   });
-    // }
+    if (json['covid_cases'] != null) {
+      covidCases = new List<CovidCases>();
+      json['covid_cases'].forEach((v) {
+        covidCases.add(new CovidCases.fromJson(v));
+      });
+    }
     demographics = json['demographics'] != null
         ? new Demographics.fromJson(json['demographics'])
         : null;
-    contact =
-        json['contact'] != null ? new Contact.fromJson(json['contact']) : null;
-    if (json['wards'] != null) {
-      wards = new List<Wards>();
-      json['wards'].forEach((v) {
-        wards.add(new Wards.fromJson(v));
-      });
-    }
+    // contact = json['contact'];
+    // if (json['wards'] != null) {
+    //   wards = new List<Null>();
+    //   json['wards'].forEach((v) {
+    //     wards.add(new Null.fromJson(v));
+    //   });
+    // }
     // if (json['health_facilities'] != null) {
     //   healthFacilities = new List<Null>();
     //   json['health_facilities'].forEach((v) {
@@ -85,18 +84,16 @@ class MunicipalityDetailsModel {
     data['type'] = this.type;
     data['code'] = this.code;
     data['district'] = this.district;
-    // if (this.covidCases != null) {
-    //   data['covid_cases'] = this.covidCases.map((v) => v.toJson()).toList();
-    // }
+    if (this.covidCases != null) {
+      data['covid_cases'] = this.covidCases.map((v) => v.toJson()).toList();
+    }
     if (this.demographics != null) {
       data['demographics'] = this.demographics.toJson();
     }
-    if (this.contact != null) {
-      data['contact'] = this.contact.toJson();
-    }
-    if (this.wards != null) {
-      data['wards'] = this.wards.map((v) => v.toJson()).toList();
-    }
+    // data['contact'] = this.contact;
+    // if (this.wards != null) {
+    //   data['wards'] = this.wards.map((v) => v.toJson()).toList();
+    // }
     // if (this.healthFacilities != null) {
     //   data['health_facilities'] =
     //       this.healthFacilities.map((v) => v.toJson()).toList();
@@ -120,6 +117,121 @@ class Centroid {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['type'] = this.type;
     data['coordinates'] = this.coordinates;
+    return data;
+  }
+}
+
+class CovidCases {
+  String sId;
+  int id;
+  int province;
+  int district;
+  int municipality;
+  String createdOn;
+  String modifiedOn;
+  String label;
+  String gender;
+  int age;
+  Centroid point;
+  //Null occupation;
+  String reportedOn;
+  String recoveredOn;
+  String deathOn;
+  String currentState;
+  bool isReinfected;
+  String source;
+  //String comment;
+  //Null type;
+  // int nationality;
+  // int ward;
+  //List<Null> relatedTo;
+
+  CovidCases({
+    this.sId,
+    this.id,
+    this.province,
+    this.district,
+    this.municipality,
+    this.createdOn,
+    this.modifiedOn,
+    this.label,
+    this.gender,
+    this.age,
+    this.point,
+    //this.occupation,
+    this.reportedOn,
+    this.recoveredOn,
+    this.deathOn,
+    this.currentState,
+    this.isReinfected,
+    this.source,
+    //this.comment,
+    //this.type,
+    // this.nationality,
+    // this.ward,
+    //this.relatedTo,
+  });
+
+  CovidCases.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    id = json['id'];
+    province = json['province'];
+    district = json['district'];
+    municipality = json['municipality'];
+    createdOn = json['createdOn'];
+    modifiedOn = json['modifiedOn'];
+    label = json['label'];
+    gender = json['gender'];
+    age = json['age'];
+    point = json['point'] != null ? new Centroid.fromJson(json['point']) : null;
+    //occupation = json['occupation'];
+    reportedOn = json['reportedOn'];
+    recoveredOn = json['recoveredOn'];
+    deathOn = json['deathOn'];
+    currentState = json['currentState'];
+    isReinfected = json['isReinfected'];
+    source = json['source'];
+    //comment = json['comment'];
+    //type = json['type'];
+    // nationality = json['nationality'];
+    // ward = json['ward'];
+    // if (json['relatedTo'] != null) {
+    //   relatedTo = new List<Null>();
+    //   json['relatedTo'].forEach((v) {
+    //     relatedTo.add(new Null.fromJson(v));
+    //   });
+    // }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['id'] = this.id;
+    data['province'] = this.province;
+    data['district'] = this.district;
+    data['municipality'] = this.municipality;
+    data['createdOn'] = this.createdOn;
+    data['modifiedOn'] = this.modifiedOn;
+    data['label'] = this.label;
+    data['gender'] = this.gender;
+    data['age'] = this.age;
+    if (this.point != null) {
+      data['point'] = this.point.toJson();
+    }
+    //data['occupation'] = this.occupation;
+    data['reportedOn'] = this.reportedOn;
+    data['recoveredOn'] = this.recoveredOn;
+    data['deathOn'] = this.deathOn;
+    data['currentState'] = this.currentState;
+    data['isReinfected'] = this.isReinfected;
+    data['source'] = this.source;
+    //data['comment'] = this.comment;
+    //data['type'] = this.type;
+    // data['nationality'] = this.nationality;
+    // data['ward'] = this.ward;
+    // if (this.relatedTo != null) {
+    //   data['relatedTo'] = this.relatedTo.map((v) => v.toJson()).toList();
+    // }
     return data;
   }
 }
@@ -157,9 +269,9 @@ class Demographics {
     malePopulation = json['malePopulation'];
     femalePopulation = json['femalePopulation'];
     householdCount = json['householdCount'];
-    maleLiteracyRate = json['maleLiteracyRate'];
-    femaleLiteracyRate = json['femaleLiteracyRate'];
-    literacyRate = json['literacyRate'];
+    maleLiteracyRate = double.parse(json['maleLiteracyRate'].toString());
+    femaleLiteracyRate = double.parse(json['femaleLiteracyRate'].toString());
+    literacyRate = double.parse(json['literacyRate'].toString());
     ageGroupPopulation = json['ageGroupPopulation'] != null
         ? new AgeGroupPopulation.fromJson(json['ageGroupPopulation'])
         : null;
@@ -281,130 +393,6 @@ class Male {
     data['60-64'] = this.i6064;
     data['65-69'] = this.i6569;
     data['70-74'] = this.i7074;
-    return data;
-  }
-}
-
-class Contact {
-  String sId;
-  int id;
-  String name;
-  String image;
-  String position;
-  String email;
-  String workNumber;
-  String mobileNumber;
-  bool isDrrFocalPerson;
-  String committee;
-  String communityAddress;
-  Centroid point;
-  int organization;
-  int province;
-  int district;
-  int municipality;
-  int ward;
-
-  Contact(
-      {this.sId,
-      this.id,
-      this.name,
-      this.image,
-      this.position,
-      this.email,
-      this.workNumber,
-      this.mobileNumber,
-      this.isDrrFocalPerson,
-      this.committee,
-      this.communityAddress,
-      this.point,
-      this.organization,
-      this.province,
-      this.district,
-      this.municipality,
-      this.ward});
-
-  Contact.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    id = json['id'];
-    name = json['name'];
-    image = json['image'];
-    position = json['position'];
-    email = json['email'];
-    workNumber = json['workNumber'];
-    mobileNumber = json['mobileNumber'];
-    isDrrFocalPerson = json['isDrrFocalPerson'];
-    committee = json['committee'];
-    communityAddress = json['communityAddress'];
-    point = json['point'] != null ? new Centroid.fromJson(json['point']) : null;
-    organization = json['organization'];
-    province = json['province'];
-    district = json['district'];
-    municipality = json['municipality'];
-    ward = json['ward'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['image'] = this.image;
-    data['position'] = this.position;
-    data['email'] = this.email;
-    data['workNumber'] = this.workNumber;
-    data['mobileNumber'] = this.mobileNumber;
-    data['isDrrFocalPerson'] = this.isDrrFocalPerson;
-    data['committee'] = this.committee;
-    data['communityAddress'] = this.communityAddress;
-    if (this.point != null) {
-      data['point'] = this.point.toJson();
-    }
-    data['organization'] = this.organization;
-    data['province'] = this.province;
-    data['district'] = this.district;
-    data['municipality'] = this.municipality;
-    data['ward'] = this.ward;
-    return data;
-  }
-}
-
-class Wards {
-  String sId;
-  int id;
-  List<double> bbox;
-  Centroid centroid;
-  String title;
-  int municipality;
-
-  Wards(
-      {this.sId,
-      this.id,
-      this.bbox,
-      this.centroid,
-      this.title,
-      this.municipality});
-
-  Wards.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    id = json['id'];
-    bbox = json['bbox'].cast<double>();
-    centroid = json['centroid'] != null
-        ? new Centroid.fromJson(json['centroid'])
-        : null;
-    title = json['title'];
-    municipality = json['municipality'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['id'] = this.id;
-    data['bbox'] = this.bbox;
-    if (this.centroid != null) {
-      data['centroid'] = this.centroid.toJson();
-    }
-    data['title'] = this.title;
-    data['municipality'] = this.municipality;
     return data;
   }
 }

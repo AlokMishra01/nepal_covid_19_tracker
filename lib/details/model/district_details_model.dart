@@ -1,7 +1,7 @@
 class DistrictDetailsModel {
   String sId;
   int id;
-  List<double> bbox;
+  //List<double> bbox;
   Centroid centroid;
   String title;
   String titleEn;
@@ -15,7 +15,7 @@ class DistrictDetailsModel {
   DistrictDetailsModel(
       {this.sId,
       this.id,
-      this.bbox,
+      //this.bbox,
       this.centroid,
       this.title,
       this.titleEn,
@@ -29,7 +29,7 @@ class DistrictDetailsModel {
   DistrictDetailsModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     id = json['id'];
-    bbox = json['bbox'].cast<double>();
+    //bbox = json['bbox'].cast<double>();
     centroid = json['centroid'] != null
         ? new Centroid.fromJson(json['centroid'])
         : null;
@@ -59,7 +59,7 @@ class DistrictDetailsModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['_id'] = this.sId;
     data['id'] = this.id;
-    data['bbox'] = this.bbox;
+    //data['bbox'] = this.bbox;
     if (this.centroid != null) {
       data['centroid'] = this.centroid.toJson();
     }
@@ -113,44 +113,44 @@ class CovidCases {
   String gender;
   int age;
   Centroid point;
-  Null occupation;
+  //Null occupation;
   String reportedOn;
   String recoveredOn;
-  Null deathOn;
+  String deathOn;
   String currentState;
   bool isReinfected;
   String source;
-  Null comment;
-  Null type;
-  Null nationality;
+  String comment;
+  //String type;
+  //int nationality;
   int ward;
   //List<Null> relatedTo;
 
-  CovidCases(
-      {this.sId,
-      this.id,
-      this.province,
-      this.district,
-      this.municipality,
-      this.createdOn,
-      this.modifiedOn,
-      this.label,
-      this.gender,
-      this.age,
-      this.point,
-      this.occupation,
-      this.reportedOn,
-      this.recoveredOn,
-      this.deathOn,
-      this.currentState,
-      this.isReinfected,
-      this.source,
-      this.comment,
-      this.type,
-      this.nationality,
-      this.ward,
-      //this.relatedTo,
-      });
+  CovidCases({
+    this.sId,
+    this.id,
+    this.province,
+    this.district,
+    this.municipality,
+    this.createdOn,
+    this.modifiedOn,
+    this.label,
+    this.gender,
+    this.age,
+    this.point,
+    //this.occupation,
+    this.reportedOn,
+    this.recoveredOn,
+    this.deathOn,
+    this.currentState,
+    this.isReinfected,
+    this.source,
+    this.comment,
+    // this.type,
+    // this.nationality,
+    this.ward,
+    //this.relatedTo,
+  });
 
   CovidCases.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -164,7 +164,7 @@ class CovidCases {
     gender = json['gender'];
     age = json['age'];
     point = json['point'] != null ? new Centroid.fromJson(json['point']) : null;
-    occupation = json['occupation'];
+    //occupation = json['occupation'];
     reportedOn = json['reportedOn'];
     recoveredOn = json['recoveredOn'];
     deathOn = json['deathOn'];
@@ -172,8 +172,8 @@ class CovidCases {
     isReinfected = json['isReinfected'];
     source = json['source'];
     comment = json['comment'];
-    type = json['type'];
-    nationality = json['nationality'];
+    // type = json['type'];
+    // nationality = json['nationality'];
     ward = json['ward'];
     // if (json['relatedTo'] != null) {
     //   relatedTo = new List<Null>();
@@ -198,7 +198,7 @@ class CovidCases {
     if (this.point != null) {
       data['point'] = this.point.toJson();
     }
-    data['occupation'] = this.occupation;
+    //data['occupation'] = this.occupation;
     data['reportedOn'] = this.reportedOn;
     data['recoveredOn'] = this.recoveredOn;
     data['deathOn'] = this.deathOn;
@@ -206,8 +206,8 @@ class CovidCases {
     data['isReinfected'] = this.isReinfected;
     data['source'] = this.source;
     data['comment'] = this.comment;
-    data['type'] = this.type;
-    data['nationality'] = this.nationality;
+    // data['type'] = this.type;
+    // data['nationality'] = this.nationality;
     data['ward'] = this.ward;
     // if (this.relatedTo != null) {
     //   data['relatedTo'] = this.relatedTo.map((v) => v.toJson()).toList();

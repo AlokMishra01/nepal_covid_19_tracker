@@ -1,40 +1,60 @@
-class MunicipalityModel {
+class DistrictModel {
+  List<Districts> districts;
+
+  DistrictModel({this.districts});
+
+  DistrictModel.fromJson(Map<String, dynamic> json) {
+    if (json['districts'] != null) {
+      districts = new List<Districts>();
+      json['districts'].forEach((v) {
+        districts.add(new Districts.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.districts != null) {
+      data['districts'] = this.districts.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Districts {
   String sId;
   int id;
   List<double> bbox;
-  Centroid centroid;
+  //Centroid centroid;
   String title;
   String titleEn;
   String titleNe;
-  String type;
   String code;
-  int district;
+  int province;
 
-  MunicipalityModel(
+  Districts(
       {this.sId,
       this.id,
       this.bbox,
-      this.centroid,
+      //this.centroid,
       this.title,
       this.titleEn,
       this.titleNe,
-      this.type,
       this.code,
-      this.district});
+      this.province});
 
-  MunicipalityModel.fromJson(Map<String, dynamic> json) {
+  Districts.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     id = json['id'];
     bbox = json['bbox'].cast<double>();
-    centroid = json['centroid'] != null
-        ? new Centroid.fromJson(json['centroid'])
-        : null;
+    // centroid = json['centroid'] != null
+    //     ? new Centroid.fromJson(json['centroid'])
+    //     : null;
     title = json['title'];
     titleEn = json['title_en'];
     titleNe = json['title_ne'];
-    type = json['type'];
     code = json['code'];
-    district = json['district'];
+    province = json['province'];
   }
 
   Map<String, dynamic> toJson() {
@@ -42,15 +62,14 @@ class MunicipalityModel {
     data['_id'] = this.sId;
     data['id'] = this.id;
     data['bbox'] = this.bbox;
-    if (this.centroid != null) {
-      data['centroid'] = this.centroid.toJson();
-    }
+    // if (this.centroid != null) {
+    //   data['centroid'] = this.centroid.toJson();
+    // }
     data['title'] = this.title;
     data['title_en'] = this.titleEn;
     data['title_ne'] = this.titleNe;
-    data['type'] = this.type;
     data['code'] = this.code;
-    data['district'] = this.district;
+    data['province'] = this.province;
     return data;
   }
 }

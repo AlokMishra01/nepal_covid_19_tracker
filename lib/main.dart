@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/dashboard_provider.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/stats_provider.dart';
+import 'package:nepal_covid_19_tracker/details/provider/details_provider.dart';
 import 'package:nepal_covid_19_tracker/faq/faq_provider.dart';
 import 'package:nepal_covid_19_tracker/myths/myth_provider.dart';
 import 'package:nepal_covid_19_tracker/hospitals/hospital_provider.dart';
@@ -58,6 +59,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => RecourceProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => DetailsProvider(),
         ),
       ],
       child: MaterialApp(

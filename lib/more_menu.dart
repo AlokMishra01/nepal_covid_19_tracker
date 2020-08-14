@@ -7,6 +7,7 @@ import 'package:nepal_covid_19_tracker/resources/resources_list.dart';
 import 'package:nepal_covid_19_tracker/utils/colors.dart';
 import 'package:route_transitions/route_transitions.dart';
 
+import 'details/view/details_page .dart';
 import 'news/news_list.dart';
 
 class MoreMenu extends StatelessWidget {
@@ -66,7 +67,15 @@ class MoreMenu extends StatelessWidget {
                   ),
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageRouteTransition(
+                        animationType: AnimationType.fade,
+                        builder: (context) => DetailsPage(),
+                      ),
+                    );
+                  },
                   child: ListTile(
                     title: Text(
                       'Nepal COVID-19 Stats (By District)',
@@ -79,30 +88,30 @@ class MoreMenu extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(
-                height: 8.0,
-              ),
-              Material(
-                color: WHITE,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.0),
-                  ),
-                ),
-                child: InkWell(
-                  onTap: () {},
-                  child: ListTile(
-                    title: Text(
-                      'Nepal COVID-19 Stats (By Municipality)',
-                      style: TextStyle(
-                        color: PRIMARY_COLOR,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // SizedBox(
+              //   height: 8.0,
+              // ),
+              // Material(
+              //   color: WHITE,
+              //   shape: RoundedRectangleBorder(
+              //     borderRadius: BorderRadius.all(
+              //       Radius.circular(5.0),
+              //     ),
+              //   ),
+              //   child: InkWell(
+              //     onTap: () {},
+              //     child: ListTile(
+              //       title: Text(
+              //         'Nepal COVID-19 Stats (By Municipality)',
+              //         style: TextStyle(
+              //           color: PRIMARY_COLOR,
+              //           fontSize: 16,
+              //           fontWeight: FontWeight.w600,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 height: 8.0,
               ),

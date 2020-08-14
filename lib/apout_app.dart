@@ -84,6 +84,9 @@ class AboutAppPage extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(
+                height: 8,
+              ),
               Row(
                 children: [
                   Text(
