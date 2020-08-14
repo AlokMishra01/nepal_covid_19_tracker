@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:nepal_covid_19_tracker/dashboard/provider/dashboard_provider.dart';
 import 'package:nepal_covid_19_tracker/faq/faq_item_view.dart';
@@ -73,6 +74,239 @@ class _DashboardPageState extends State<DashboardPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        SizedBox(height: 16),
+                        Material(
+                          color: PRIMARY_COLOR.withOpacity(0.75),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  ' Symptoms लक्षण',
+                                  style: TextStyle(
+                                    color: WHITE,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        CarouselSlider(
+                          items: [
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/light_fever.gif',
+                                  ),
+                                  title: Text(
+                                    'Fever\nज्वरो',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/light_cough.gif',
+                                  ),
+                                  title: Text(
+                                    'Dry Cough\nसुख्खा खोकी',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/light_tiredness.gif',
+                                  ),
+                                  title: Text(
+                                    'Tiredness\nथकान',
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                          options: CarouselOptions(
+                            height: 100,
+                            viewportFraction: 0.9,
+                            initialPage: 0,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 3),
+                            autoPlayAnimationDuration: Duration(
+                              milliseconds: 800,
+                            ),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: true,
+                            //onPageChanged: callbackFunction,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Material(
+                          color: PRIMARY_COLOR.withOpacity(0.75),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(5.0),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  ' Prevention रोकथाम',
+                                  style: TextStyle(
+                                    color: WHITE,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        CarouselSlider(
+                          items: [
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/mask.png',
+                                  ),
+                                  title: Text(
+                                    'Wear a mask.Save lives\n'
+                                    'मास्क लगाउनुहोस्। जीवन बचाउनुहोस्',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/handwash.gif',
+                                  ),
+                                  title: Text(
+                                    'Clean your hands\n'
+                                    'आफ्ना हातहरू सफा गर्नुहोस्',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Material(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10),
+                                ),
+                              ),
+                              child: Center(
+                                child: ListTile(
+                                  leading: Image.asset(
+                                    'assets/images/keepdistance.png',
+                                  ),
+                                  title: Text(
+                                    'Keep a safe distance\n'
+                                    'एक सुरक्षित दूरी राख्नुहोस्',
+                                    style: TextStyle(
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                          options: CarouselOptions(
+                            height: 100,
+                            viewportFraction: 0.9,
+                            initialPage: 0,
+                            enableInfiniteScroll: true,
+                            reverse: false,
+                            autoPlay: true,
+                            autoPlayInterval: Duration(seconds: 3),
+                            autoPlayAnimationDuration: Duration(
+                              milliseconds: 800,
+                            ),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: true,
+                            //onPageChanged: callbackFunction,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                        ),
                         SizedBox(height: 16),
                         Material(
                           color: PRIMARY_COLOR.withOpacity(0.75),

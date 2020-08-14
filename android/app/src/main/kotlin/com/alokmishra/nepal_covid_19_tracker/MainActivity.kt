@@ -1,4 +1,4 @@
-package com.example.nepal_covid_19_tracker
+package com.alokmishra.nepal_covid_19_tracker
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -19,47 +19,45 @@ class FAQItemView extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Q. ${data.questionNp}',
-                style: TextStyle(
-                  color: PRIMARY_COLOR,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Q. ${data.questionNp}',
+              style: TextStyle(
+                color: PRIMARY_COLOR,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
               ),
-              SizedBox(
-                height: 2.0,
+            ),
+            SizedBox(
+              height: 2.0,
+            ),
+            Text(
+              'Ans. ${data.answerNp}',
+              style: TextStyle(
+                color: STEXT,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
-              Text(
-                'Ans. ${data.answerNp}',
-                style: TextStyle(
-                  color: STEXT,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              SizedBox(
-                height: 2.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    timeDiffNow(data.updatedAt),
-                    style: TextStyle(
-                      color: PRIMARY_COLOR,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+            ),
+            SizedBox(
+              height: 2.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  timeDiffNow(data.updatedAt),
+                  style: TextStyle(
+                    color: PRIMARY_COLOR,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

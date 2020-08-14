@@ -23,63 +23,61 @@ class NewsItemView extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  data.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: PRIMARY_COLOR,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                data.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: PRIMARY_COLOR,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
-                SizedBox(
-                  height: 2.0,
+              ),
+              SizedBox(
+                height: 2.0,
+              ),
+              CachedNetworkImage(
+                imageUrl: data.imageUrl,
+              ),
+              SizedBox(
+                height: 2.0,
+              ),
+              Text(
+                data.summary,
+                style: TextStyle(
+                  color: STEXT,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
-                CachedNetworkImage(
-                  imageUrl: data.imageUrl,
-                ),
-                SizedBox(
-                  height: 2.0,
-                ),
-                Text(
-                  data.summary,
-                  style: TextStyle(
-                    color: STEXT,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(
-                  height: 2.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      timeDiffNow(data.updatedAt),
-                      style: TextStyle(
-                        color: PRIMARY_COLOR,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+              ),
+              SizedBox(
+                height: 2.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    timeDiffNow(data.updatedAt),
+                    style: TextStyle(
+                      color: PRIMARY_COLOR,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
-                    Text(
-                      ' - ${data.source}',
-                      style: TextStyle(
-                        color: STEXT,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ),
+                  Text(
+                    ' - ${data.source}',
+                    style: TextStyle(
+                      color: STEXT,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
